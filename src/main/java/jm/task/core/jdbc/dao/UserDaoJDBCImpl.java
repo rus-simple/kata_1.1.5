@@ -25,7 +25,7 @@ public class UserDaoJDBCImpl implements UserDao {
                 "  `id` INT NOT NULL AUTO_INCREMENT,\n" +
                 "  `name` VARCHAR(45) NOT NULL,\n" +
                 "  `lastName` VARCHAR(45) NOT NULL,\n" +
-                "  `age` INT(3) NULL,\n" +
+                "  `age` TINYINT NULL,\n" +
                 "  PRIMARY KEY (`id`))\n" +
                 "ENGINE = InnoDB\n" +
                 "DEFAULT CHARACTER SET = utf8;";
@@ -62,7 +62,7 @@ public class UserDaoJDBCImpl implements UserDao {
             preparedStatement.setByte(3, age); // передача возраста
 
             preparedStatement.executeUpdate();
-            System.out.println("Пользователь успешно сохранён.");
+            System.out.println("User с именем — " + name + " добавлен в базу данных.");
         } catch (SQLException e) {
             e.printStackTrace();
             System.err.println("Ошибка сохранения пользователя: " + e.getMessage());
