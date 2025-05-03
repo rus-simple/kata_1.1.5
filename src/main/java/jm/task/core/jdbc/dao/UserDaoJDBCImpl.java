@@ -20,7 +20,7 @@ public class UserDaoJDBCImpl implements UserDao {
 
     //создание таблицы
     public void createUsersTable() {
-        PreparedStatement preparedStatement = null;
+
         String sqlcreateUsersTable = "CREATE TABLE `katadbusers`.`users` (\n" +
                 "  `id` INT NOT NULL AUTO_INCREMENT,\n" +
                 "  `name` VARCHAR(45) NOT NULL,\n" +
@@ -29,11 +29,11 @@ public class UserDaoJDBCImpl implements UserDao {
                 "  PRIMARY KEY (`id`))\n" +
                 "ENGINE = InnoDB\n" +
                 "DEFAULT CHARACTER SET = utf8;";
-        try {
-            preparedStatement = getConnection().prepareStatement(sqlcreateUsersTable);
-            System.out.println("Таблица создана!");
+        try (PreparedStatement preparedStatement = getConnection().prepareStatement(sqlcreateUsersTable)) {
+            preparedStatement.execute(); // Выполнение команды
+            System.out.println("Таблица успешно создана.");
         } catch (SQLException e) {
-            System.err.println("Ошибка создания таблицы");
+            System.err.println("Ошибка создания таблицы: " + e.getMessage());
         }
     }
 
@@ -41,38 +41,31 @@ public class UserDaoJDBCImpl implements UserDao {
     public void dropUsersTable() {
 
         String sqldropUsersTable = "DROP TABLE IF EXISTS katadbusers.users";
-        PreparedStatement preparedStatement = null;
-        try {
-            preparedStatement = getConnection().prepareStatement(sqldropUsersTable);
-            System.out.println("Таблица удалена!");
+
+        try (PreparedStatement preparedStatement = getConnection().prepareStatement(sqldropUsersTable)) {
+            preparedStatement.execute();
+            System.out.println("Таблица успешно удалена.");
         } catch (SQLException e) {
-            e.printStackTrace();
-            System.err.println("Ошибка удаления таблицы!");
+            System.err.println("Ошибка удаления таблицы: " + e.getMessage());
         }
     }
 
     //Добавление User в таблицу
     public void saveUser(String name, String lastName, byte age) {
         User user = new User();
-        //user.name = name;
-        //User.lastName = lastName;
-        //User.age = age;
 
-        String sqlsaveUser = "INSERT INTO users (id, name, lastName, age) VALUES (?, ?, ?, ?)";
+        String sqlsaveUser = "INSERT INTO users (name, lastName, age) VALUES (?, ?, ?)";
 
         try(PreparedStatement preparedStatement = getConnection().prepareStatement(sqlsaveUser)) {
-            //preparedStatement = ;
-
-            preparedStatement.setLong(1,user.getId());
-            preparedStatement.setString(2,user.getName());
-            preparedStatement.setString(3,user.getLastName());
-            preparedStatement.setByte(3,user.getAge());
+            preparedStatement.setString(1, name); // передача фактического имени
+            preparedStatement.setString(2, lastName); // передача фамилии
+            preparedStatement.setByte(3, age); // передача возраста
 
             preparedStatement.executeUpdate();
-            System.out.println("Запись добавлена в таблицу!");
+            System.out.println("Пользователь успешно сохранён.");
         } catch (SQLException e) {
             e.printStackTrace();
-            System.err.println("Ошибка создания пользователя!");
+            System.err.println("Ошибка сохранения пользователя: " + e.getMessage());
         }
 
     }
@@ -80,18 +73,17 @@ public class UserDaoJDBCImpl implements UserDao {
     //удаление из таблицы по id
     public void removeUserById(long id) {
         String sqlremoveUserById = "DELETE from users where id = ?";
-        User user = new User();
 
-        try {
-            PreparedStatement preparedStatement = null;
-            preparedStatement = getConnection().prepareStatement(sqlremoveUserById);
+        try (PreparedStatement preparedStatement = getConnection().prepareStatement(sqlremoveUserById))  {
+            //PreparedStatement preparedStatement = null;
+            //preparedStatement = getConnection().prepareStatement(sqlremoveUserById);
             preparedStatement.setLong(1,id);
-
             preparedStatement.executeUpdate();
+            System.out.println("Пользователь успешно удалён.");
 
         } catch (SQLException e) {
             e.printStackTrace();
-            System.err.println("Ошибка удаления из таблицы!");
+            System.err.println("Ошибка удаления пользователя: " + e.getMessage());
         }
     }
 
@@ -110,9 +102,12 @@ public class UserDaoJDBCImpl implements UserDao {
                 user.setName(resultSet.getString("name"));
                 user.setLastName(resultSet.getString("lastName"));
                 user.setAge(resultSet.getByte("age"));
-
                 listUsers.add(user);
+            }
+            if (!listUsers.isEmpty()) {
                 System.out.println("Данные таблицы выгружены!");
+            } else {
+                System.out.println("Нет данных в таблице.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -126,14 +121,13 @@ public class UserDaoJDBCImpl implements UserDao {
     public void cleanUsersTable() {
         User user = new User();
         String sqlcleanUsersTable = "TRUNCATE TABLE users";
-        PreparedStatement preparedStatement = null;
 
-        try {
-            preparedStatement = getConnection().prepareStatement(sqlcleanUsersTable) ;
-            System.out.println("Таблица удалена!");
+        try (PreparedStatement preparedStatement = getConnection().prepareStatement(sqlcleanUsersTable)) {
+            preparedStatement.execute();
+            System.out.println("Таблица успешно очищена.");
         } catch (SQLException e) {
             e.printStackTrace();
-            System.err.println("Ошибка очистки таблицы!");
+            System.err.println("Ошибка очистки таблицы: " + e.getMessage());
         }
     }
 }
