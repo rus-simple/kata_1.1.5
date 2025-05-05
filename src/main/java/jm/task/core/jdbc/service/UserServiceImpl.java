@@ -1,16 +1,16 @@
 package jm.task.core.jdbc.service;
 
-import com.sun.source.util.SourcePositions;
+import jm.task.core.jdbc.dao.UserDaoHibernateImpl;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.dao.UserDao;
-import jm.task.core.jdbc.dao.UserDaoJDBCImpl;
 
 
 import java.util.List;
 
 public class UserServiceImpl implements UserService {
     // Приватное поле dao типа UserDao, инстанцируемое как UserDaoJDBCImpl
-    private final UserDao dao = new UserDaoJDBCImpl();
+    //private final UserDao dao = new UserDaoJDBCImpl();
+    private final UserDao dao = new UserDaoHibernateImpl();
 
     public void createUsersTable() {
         dao.createUsersTable();

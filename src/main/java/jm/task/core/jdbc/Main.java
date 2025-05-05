@@ -1,12 +1,12 @@
 package jm.task.core.jdbc;
 
-import antlr.Utils;
+import jm.task.core.jdbc.service.UserService;
 import jm.task.core.jdbc.service.UserServiceImpl;
 
 public class Main {
     public static void main(String[] args) {
-        // Инстанцируем сервис для работы с пользователями
-        UserServiceImpl userService = new UserServiceImpl();
+
+        UserService userService = new UserServiceImpl();
 
         // Шаг 1: Создаём таблицу
         userService.createUsersTable();
